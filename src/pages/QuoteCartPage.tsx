@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom';
 import { Trash2, Minus, Plus, ShoppingBag, ArrowLeft, CheckCircle2, FileText } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { getProductIcon, formatPrice } from '../utils/productIcons';
+import { submitOrder } from '../lib/ordersService';
 
 export const QuoteCartPage: React.FC = () => {
     const { quoteItems, removeFromQuote, updateQuoteItem, clearQuote, user } = useApp();
     const [submitted, setSubmitted] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState('');
     const [formData, setFormData] = useState({
         name: user?.name ?? '',
         company: user?.company ?? '',
@@ -22,16 +24,32 @@ export const QuoteCartPage: React.FC = () => {
         return { min, max, totalUnits };
     }, [quoteItems]);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setSubmitError('');
         setIsSubmitting(true);
-        setTimeout(() => {
-            setIsSubmitting(false);
-            setSubmitted(true);
+
+        let ok = false;
+
+        if (user) {
+            // Authenticated: persist to Supabase
+            ok = await submitOrder(quoteItems, formData, user.id);
+        } else {
+            // Guest: simulate a short delay (no persistence without auth)
+            await new Promise((r) => setTimeout(r, 900));
+            ok = true;
+        };
+
+        setIsSubmitting(false);
+
+        if (ok) {
             clearQuote();
-        }, 1200);
+            setSubmitted(true);
+        } else {
+            setSubmitError('Hubo un problema al enviar tu solicitud. Por favor intenta de nuevo o contáctanos directamente.')};
     };
 
+    // Success screen
     if (submitted) {
         return (
             <div className="bg-background min-h-screen flex items-center justify-center py-24 px-gutter">
@@ -46,10 +64,16 @@ export const QuoteCartPage: React.FC = () => {
                         Hemos recibido tu solicitud. Un asesor especializado se comunicará con tu empresa en menos de 24 horas hábiles con una propuesta estructurada.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Link to="/catalogo" className="inline-flex items-center justify-center gap-2 border border-outline text-primary font-body text-sm font-bold px-6 py-3 rounded-default hover:border-primary hover:bg-surface-container transition-colors h-12">
+                        <Link
+                            to="/catalogo"
+                            className="inline-flex items-center justify-center gap-2 border border-outline text-primary font-body text-sm font-bold px-6 py-3 rounded-default hover:border-primary hover:bg-surface-container transition-colors h-12"
+                        >
                             Seguir explorando
                         </Link>
-                        <Link to="/" className="inline-flex items-center justify-center gap-2 bg-accent text-primary font-body text-sm font-bold px-6 py-3 rounded-default hover:bg-yellow-500 transition-all h-12">
+                        <Link
+                            to="/"
+                            className="inline-flex items-center justify-center gap-2 bg-accent text-primary font-body text-sm font-bold px-6 py-3 rounded-default hover:bg-yellow-500 transition-all h-12"
+                        >
                             Volver al inicio
                         </Link>
                     </div>
@@ -58,6 +82,7 @@ export const QuoteCartPage: React.FC = () => {
         );
     }
 
+    // Empty cart
     if (quoteItems.length === 0) {
         return (
             <div className="bg-background min-h-screen flex items-center justify-center py-24 px-gutter">
@@ -71,7 +96,10 @@ export const QuoteCartPage: React.FC = () => {
                     <p className="font-body text-base text-on-surface-variant mb-8">
                         Explora nuestro catálogo y agrega las prendas que necesitas para tu organización. Podrás revisarlas y enviarlas como una solicitud estructurada.
                     </p>
-                    <Link to="/catalogo" className="inline-flex items-center justify-center gap-2 bg-accent text-primary font-body text-sm font-bold px-8 py-3 rounded-default hover:bg-yellow-500 hover:shadow-ambient transition-all h-12">
+                    <Link
+                        to="/catalogo"
+                        className="inline-flex items-center justify-center gap-2 bg-accent text-primary font-body text-sm font-bold px-8 py-3 rounded-default hover:bg-yellow-500 hover:shadow-ambient transition-all h-12"
+                    >
                         <ArrowLeft className="w-4 h-4" />
                         Ir al catálogo
                     </Link>
@@ -80,6 +108,7 @@ export const QuoteCartPage: React.FC = () => {
         );
     }
 
+    // Main cart view
     return (
         <div className="bg-background min-h-screen">
             {/* Header */}
@@ -103,10 +132,13 @@ export const QuoteCartPage: React.FC = () => {
 
                         {/* Items list */}
                         <div className="lg:col-span-2 space-y-4">
-                            {quoteItems.map(item => {
-                                const Icon = getProductIcon(item.product.iconName);
+                            {quoteItems.map((item) => {
+                                const Icon = getProductIcon(item.product.iconName)
                                 return (
-                                    <div key={item.product.id} className="bg-surface-container-lowest rounded-xl premium-border shadow-ambient p-5 flex flex-col sm:flex-row gap-5">
+                                    <div
+                                        key={item.product.id}
+                                        className="bg-surface-container-lowest rounded-xl premium-border shadow-ambient p-5 flex flex-col sm:flex-row gap-5"
+                                    >
                                         {/* Icon */}
                                         <div className="w-full sm:w-24 h-24 shrink-0 bg-surface-container rounded-lg flex items-center justify-center text-outline-variant">
                                             <Icon className="w-10 h-10" strokeWidth={1.5} />
@@ -116,11 +148,15 @@ export const QuoteCartPage: React.FC = () => {
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-start justify-between gap-4 mb-2">
                                                 <div>
-                                                    <Link to={`/catalogo/${item.product.id}`} className="font-display text-base text-primary font-bold hover:text-secondary transition-colors">
+                                                    <Link
+                                                        to={`/catalogo/${item.product.id}`}
+                                                        className="font-display text-base text-primary font-bold hover:text-secondary transition-colors"
+                                                    >
                                                         {item.product.name}
                                                     </Link>
                                                     <p className="font-body text-xs text-on-surface-variant mt-0.5">
-                                                        {item.product.sector} · {item.product.category} · Color: <span className="font-semibold text-on-surface">{item.selectedColor}</span>
+                                                        {item.product.sector} · {item.product.category} · Color:{' '}
+                                                        <span className="font-semibold text-on-surface">{item.selectedColor}</span>
                                                     </p>
                                                 </div>
                                                 <button
@@ -140,7 +176,11 @@ export const QuoteCartPage: React.FC = () => {
                                                     </label>
                                                     <div className="flex items-center border border-outline-variant rounded-default h-10 overflow-hidden">
                                                         <button
-                                                            onClick={() => updateQuoteItem(item.product.id, { quantity: Math.max(item.product.minOrder, item.quantity - 10) })}
+                                                            onClick={() =>
+                                                                updateQuoteItem(item.product.id, {
+                                                                    quantity: Math.max(item.product.minOrder, item.quantity - 10),
+                                                                })
+                                                            }
                                                             className="w-9 h-full flex items-center justify-center text-primary hover:bg-surface-container transition-colors cursor-pointer"
                                                         >
                                                             <Minus className="w-3.5 h-3.5" />
@@ -149,11 +189,20 @@ export const QuoteCartPage: React.FC = () => {
                                                             type="number"
                                                             value={item.quantity}
                                                             min={item.product.minOrder}
-                                                            onChange={e => updateQuoteItem(item.product.id, { quantity: Math.max(item.product.minOrder, Number(e.target.value) || item.product.minOrder) })}
+                                                            onChange={(e) =>
+                                                                updateQuoteItem(item.product.id, {
+                                                                    quantity: Math.max(
+                                                                        item.product.minOrder,
+                                                                        Number(e.target.value) || item.product.minOrder
+                                                                    ),
+                                                                })
+                                                            }
                                                             className="w-16 h-full text-center font-body text-sm font-bold text-primary focus:outline-none border-x border-outline-variant"
                                                         />
                                                         <button
-                                                            onClick={() => updateQuoteItem(item.product.id, { quantity: item.quantity + 10 })}
+                                                            onClick={() =>
+                                                                updateQuoteItem(item.product.id, { quantity: item.quantity + 10 })
+                                                            }
                                                             className="w-9 h-full flex items-center justify-center text-primary hover:bg-surface-container transition-colors cursor-pointer"
                                                         >
                                                             <Plus className="w-3.5 h-3.5" />
@@ -167,7 +216,8 @@ export const QuoteCartPage: React.FC = () => {
                                                         Subtotal estimado
                                                     </span>
                                                     <span className="font-display text-base text-primary font-bold">
-                                                        {formatPrice(item.product.priceFrom * item.quantity)} – {formatPrice(item.product.priceTo * item.quantity)}
+                                                        {formatPrice(item.product.priceFrom * item.quantity)} –{' '}
+                                                        {formatPrice(item.product.priceTo * item.quantity)}
                                                     </span>
                                                 </div>
                                             </div>
@@ -179,11 +229,14 @@ export const QuoteCartPage: React.FC = () => {
                                             )}
                                         </div>
                                     </div>
-                                );
+                                )
                             })}
 
                             <div className="flex justify-between items-center pt-2">
-                                <Link to="/catalogo" className="inline-flex items-center gap-2 text-secondary font-body text-sm font-semibold hover:text-primary transition-colors">
+                                <Link
+                                    to="/catalogo"
+                                    className="inline-flex items-center gap-2 text-secondary font-body text-sm font-semibold hover:text-primary transition-colors"
+                                >
                                     <ArrowLeft className="w-4 h-4" />
                                     Seguir agregando productos
                                 </Link>
@@ -216,7 +269,8 @@ export const QuoteCartPage: React.FC = () => {
                                     <div className="flex justify-between font-body text-sm">
                                         <span className="text-on-surface-variant">Estimado total</span>
                                         <span className="font-bold text-primary text-right">
-                                            {formatPrice(totals.min)}<br />– {formatPrice(totals.max)}
+                                            {formatPrice(totals.min)}
+                                            <br />– {formatPrice(totals.max)}
                                         </span>
                                     </div>
                                     <p className="font-body text-xs text-on-surface-variant opacity-70 pt-1">
@@ -229,6 +283,13 @@ export const QuoteCartPage: React.FC = () => {
                                     <h4 className="font-display text-sm text-primary font-bold uppercase tracking-wider">
                                         Datos de contacto
                                     </h4>
+
+                                    {submitError && (
+                                        <div className="bg-error-container border border-error/20 text-on-error-container p-3 rounded-lg font-body text-xs">
+                                            {submitError}
+                                        </div>
+                                    )}
+
                                     <div>
                                         <label className="block font-body text-xs text-on-surface-variant mb-1.5 font-bold uppercase tracking-wider">
                                             Nombre completo
@@ -237,7 +298,7 @@ export const QuoteCartPage: React.FC = () => {
                                             type="text"
                                             required
                                             value={formData.name}
-                                            onChange={e => setFormData(p => ({ ...p, name: e.target.value }))}
+                                            onChange={(e) => setFormData((p) => ({ ...p, name: e.target.value }))}
                                             placeholder="Ej. Juan Pérez"
                                             className="w-full h-11 px-4 border border-outline-variant rounded-default focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/10 transition-all font-body text-sm"
                                         />
@@ -250,7 +311,7 @@ export const QuoteCartPage: React.FC = () => {
                                             type="text"
                                             required
                                             value={formData.company}
-                                            onChange={e => setFormData(p => ({ ...p, company: e.target.value }))}
+                                            onChange={(e) => setFormData((p) => ({ ...p, company: e.target.value }))}
                                             placeholder="Nombre de la empresa"
                                             className="w-full h-11 px-4 border border-outline-variant rounded-default focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/10 transition-all font-body text-sm"
                                         />
@@ -263,7 +324,7 @@ export const QuoteCartPage: React.FC = () => {
                                             type="email"
                                             required
                                             value={formData.email}
-                                            onChange={e => setFormData(p => ({ ...p, email: e.target.value }))}
+                                            onChange={(e) => setFormData((p) => ({ ...p, email: e.target.value }))}
                                             placeholder="ejemplo@empresa.com"
                                             className="w-full h-11 px-4 border border-outline-variant rounded-default focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/10 transition-all font-body text-sm"
                                         />
@@ -276,11 +337,21 @@ export const QuoteCartPage: React.FC = () => {
                                             type="tel"
                                             required
                                             value={formData.phone}
-                                            onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))}
+                                            onChange={(e) => setFormData((p) => ({ ...p, phone: e.target.value }))}
                                             placeholder="Ej. 3001234567"
                                             className="w-full h-11 px-4 border border-outline-variant rounded-default focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/10 transition-all font-body text-sm"
                                         />
                                     </div>
+
+                                    {!user && (
+                                        <p className="font-body text-xs text-on-surface-variant bg-surface-container-low p-3 rounded-lg">
+                                            Tu solicitud se enviará como invitado.{' '}
+                                            <Link to="/auth" className="text-secondary font-semibold hover:text-primary">
+                                                Inicia sesión
+                                            </Link>{' '}
+                                            para dar seguimiento a tus cotizaciones desde tu cuenta.
+                                        </p>
+                                    )}
 
                                     <button
                                         type="submit"
