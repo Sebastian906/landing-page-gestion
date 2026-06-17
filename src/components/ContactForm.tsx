@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Headset, ClipboardCheck, ClipboardList } from 'lucide-react';
+import { submitLead } from '../lib/leadsService'
 
 export const ContactForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -9,21 +10,32 @@ export const ContactForm: React.FC = () => {
     email: ''
   });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Simulate API call
-    console.log('Submitted form data:', formData);
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setFormData({ name: '', company: '', volume: 'Menos de 100 prendas', email: '' });
-    }, 5000);
-  };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    setLoading(true)
+
+    const ok = await submitLead(formData)
+
+    setLoading(false)
+
+    if (ok) {
+      setSubmitted(true)
+      setTimeout(() => {
+        setSubmitted(false)
+        setFormData({ name: '', company: '', volume: 'Menos de 100 prendas', email: '' })
+      }, 5000)
+    } else {
+      setError('No fue posible enviar tu solicitud. Por favor intenta de nuevo.')
+    }
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -89,12 +101,18 @@ export const ContactForm: React.FC = () => {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-5">
+                  {error && (
+                    <div className="bg-error-container border border-error/20 text-on-error-container p-4 rounded-lg font-body text-sm">
+                      {error}
+                    </div>
+                  )}
+
                   <div>
                     <label className="block font-body text-xs text-on-surface-variant mb-1.5 font-bold uppercase tracking-wider">
                       Nombre Completo
                     </label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       name="name"
                       required
                       value={formData.name}
@@ -109,8 +127,8 @@ export const ContactForm: React.FC = () => {
                       <label className="block font-body text-xs text-on-surface-variant mb-1.5 font-bold uppercase tracking-wider">
                         Empresa
                       </label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         name="company"
                         required
                         value={formData.company}
@@ -123,7 +141,7 @@ export const ContactForm: React.FC = () => {
                       <label className="block font-body text-xs text-on-surface-variant mb-1.5 font-bold uppercase tracking-wider">
                         Volumen estimado
                       </label>
-                      <select 
+                      <select
                         name="volume"
                         value={formData.volume}
                         onChange={handleInputChange}
@@ -141,8 +159,8 @@ export const ContactForm: React.FC = () => {
                     <label className="block font-body text-xs text-on-surface-variant mb-1.5 font-bold uppercase tracking-wider">
                       Correo Electrónico Corporativo
                     </label>
-                    <input 
-                      type="email" 
+                    <input
+                      type="email"
                       name="email"
                       required
                       value={formData.email}
@@ -152,11 +170,16 @@ export const ContactForm: React.FC = () => {
                     />
                   </div>
 
-                  <button 
+                  <button
                     type="submit"
-                    className="w-full bg-accent text-primary font-body text-base font-bold py-3 rounded-default hover:bg-yellow-500 hover:shadow-ambient active:scale-95 transition-all h-12 flex items-center justify-center mt-2 cursor-pointer"
+                    disabled={loading}
+                    className="w-full bg-accent text-primary font-body text-base font-bold py-3 rounded-default hover:bg-yellow-500 hover:shadow-ambient active:scale-95 transition-all h-12 flex items-center justify-center mt-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    Solicitar Cotización
+                    {loading ? (
+                      <span className="inline-block w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                    ) : (
+                      'Solicitar Cotización'
+                    )}
                   </button>
                 </form>
               )}

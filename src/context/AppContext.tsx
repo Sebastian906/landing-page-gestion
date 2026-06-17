@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react'
+import { signIn, signUp, signOut, getSession } from '../lib/authService'
+import type { RegisterData } from '../lib/authService'
 
 // Types 
 export interface User {
@@ -37,6 +39,7 @@ export interface QuoteItem {
 interface AppContextType {
     // Auth
     user: User | null;
+    authLoading: boolean;
     login: (email: string, password: string) => Promise<boolean>;
     register: (data: RegisterData) => Promise<boolean>;
     logout: () => void;
@@ -49,70 +52,56 @@ interface AppContextType {
     quoteCount: number;
 }
 
-interface RegisterData {
-    name: string;
-    email: string;
-    password: string;
-    company: string;
-    sector: string;
-}
+// Re-export so callers don't need to import from two places
+export type { RegisterData }
 
-// Mock Data 
-const MOCK_USER: User = {
-    id: 'usr_001',
-    name: 'Carlos Mendoza',
-    email: 'carlos@empresa.com',
-    company: 'Grupo Empresarial Andino S.A.',
-    role: 'client',
-    sector: 'Empresarial',
-    joinedAt: '2024-03-15',
-};
-
-// Context 
+// Context
 const AppContext = createContext<AppContextType | null>(null);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
+    const [authLoading, setAuthLoading] = useState(true) // true while restoring session
     const [quoteItems, setQuoteItems] = useState<QuoteItem[]>([]);
 
+    // Restore session on mount (handles page refresh)
+    useEffect(() => {
+        getSession().then((restored) => {
+            setUser(restored)
+            setAuthLoading(false)
+        });
+    }, []);
+
     // Auth
-    const login = useCallback(async (email: string, _password: string): Promise<boolean> => {
-        await new Promise(r => setTimeout(r, 800)); // Simulate API
-        if (email && _password.length >= 6) {
-            setUser({ ...MOCK_USER, email });
+    const login = useCallback(async (email: string, password: string): Promise<boolean> => {
+        const result = await signIn(email, password);
+        if (result) {
+            setUser(result);
             return true;
         }
         return false;
     }, []);
 
     const register = useCallback(async (data: RegisterData): Promise<boolean> => {
-        await new Promise(r => setTimeout(r, 1000));
-        if (data.email && data.password.length >= 6) {
-            setUser({
-                id: 'usr_new',
-                name: data.name,
-                email: data.email,
-                company: data.company,
-                role: 'client',
-                sector: data.sector,
-                joinedAt: new Date().toISOString().split('T')[0],
-            });
+        const result = await signUp(data)
+        if (result) {
+            setUser(result);
             return true;
         }
         return false;
     }, []);
 
-    const logout = useCallback(() => {
+    const logout = useCallback(async () => {
+        await signOut();
         setUser(null);
         setQuoteItems([]);
     }, []);
 
-    // Quote Cart
+    // Quote Cart (kept in memory — persisted to Supabase on submit)
     const addToQuote = useCallback((item: QuoteItem) => {
-        setQuoteItems(prev => {
-            const exists = prev.find(i => i.product.id === item.product.id);
+        setQuoteItems((prev) => {
+            const exists = prev.find((i) => i.product.id === item.product.id)
             if (exists) {
-                return prev.map(i =>
+                return prev.map((i) =>
                     i.product.id === item.product.id
                         ? { ...i, quantity: i.quantity + item.quantity }
                         : i
@@ -123,23 +112,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }, []);
 
     const removeFromQuote = useCallback((productId: string) => {
-        setQuoteItems(prev => prev.filter(i => i.product.id !== productId));
+        setQuoteItems((prev) => prev.filter((i) => i.product.id !== productId))
     }, []);
 
     const updateQuoteItem = useCallback((productId: string, updates: Partial<QuoteItem>) => {
-        setQuoteItems(prev =>
-            prev.map(i => i.product.id === productId ? { ...i, ...updates } : i)
+        setQuoteItems((prev) =>
+            prev.map((i) => (i.product.id === productId ? { ...i, ...updates } : i))
         );
     }, []);
 
-    const clearQuote = useCallback(() => setQuoteItems([]), []);
+    const clearQuote = useCallback(() => setQuoteItems([]), [])
 
-    const quoteCount = quoteItems.reduce((sum, i) => sum + i.quantity, 0);
+    const quoteCount = quoteItems.reduce((sum, i) => sum + i.quantity, 0)
 
     return (
         <AppContext.Provider value={{
-            user, login, register, logout,
-            quoteItems, addToQuote, removeFromQuote, updateQuoteItem, clearQuote, quoteCount,
+                user, authLoading, login, register, logout, quoteItems, addToQuote, removeFromQuote, updateQuoteItem, clearQuote, quoteCount,
         }}>
             {children}
         </AppContext.Provider>
