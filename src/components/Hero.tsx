@@ -7,7 +7,7 @@ export const Hero: React.FC = () => {
       {/* Background Image and Overlays */}
       <div className="absolute inset-0 z-0">
         <img 
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuALsms5rScQJDrMgFwH88XKewyuOo-ASxKvcsx9zMo129Hd5huGaPt6MZtj9kBY0uSMFm8TN0WzZjMOFhKrwbyzrr9H4k6KPobW6vnH4AyNPdOtR1IKdWqaAJXYvt7DfP1zUto8p4-C0U8PdgEjLlsisLGzCTGzuJTr3I6dga_bS5Vj8tAuQZNZh1AMua7QdK3g0QpGP5VUFTflHjeAzCwcRO63HEyejrr_d65Ca3MebJmyvX9qu4Kau-8ou55KloEWQClG9WRqJ4M" 
+          src="/imagenes/LogoCotexcal.png" 
           alt="High-tech textile manufacturing facility"
           className="w-full h-full object-cover object-center opacity-30 dark:opacity-20"
         />
@@ -17,9 +17,7 @@ export const Hero: React.FC = () => {
       <div className="max-w-container-max mx-auto px-gutter relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
           <div className="lg:col-span-8 flex flex-col justify-center reveal active">
-            <span className="text-secondary font-body text-sm font-semibold tracking-widest uppercase mb-4 block">
-              Manufactura a Escala Industrial
-            </span>
+            
             <h1 className="font-display text-4xl md:text-5xl lg:text-6xl text-primary font-bold mb-6 leading-tight max-w-4xl">
               Uniformes que representan la excelencia de tu organización.
             </h1>
