@@ -5,6 +5,7 @@ interface ProductItem {
   title: string;
   icon: React.ReactNode;
   aspectClass: string;
+  image: string;
 }
 
 export const ProductGallery: React.FC = () => {
@@ -12,42 +13,51 @@ export const ProductGallery: React.FC = () => {
     {
       title: "Empresariales",
       icon: <Shirt className="w-8 h-8" />,
-      aspectClass: "aspect-square"
+      aspectClass: "aspect-square",
+      image: "/imagenes/SectorEmpresarial.png"
     },
     {
-      title: "Médicos",
+      title: "Médico",
       icon: <HeartPulse className="w-8 h-8" />,
-      aspectClass: "aspect-[4/5]"
+      aspectClass: "aspect-[4/5]",
+      image: "/imagenes/SectorSalud.png"
     },
     {
-      title: "Académicos",
+      title: "Académico",
       icon: <GraduationCap className="w-8 h-8" />,
-      aspectClass: "aspect-[4/3]"
+      aspectClass: "aspect-[4/3]",
+      image: "/imagenes/SectorEducativo.png"
     },
     {
-      title: "Dotación",
+      title: "Gastronómico",
       icon: <Hammer className="w-8 h-8" />,
-      aspectClass: "aspect-square"
+      aspectClass: "aspect-square",
+      image: "/imagenes/SectorGastronomico.png"
     },
     {
-      title: "Chaquetas",
+      title: "Gorras",
       icon: <Sparkles className="w-8 h-8" />,
-      aspectClass: "aspect-[3/4]"
+      aspectClass: "aspect-[3/4]",
+      image: "/imagenes/Gorras.png"
     },
     {
       title: "Camisas",
       icon: <Scissors className="w-8 h-8" />,
-      aspectClass: "aspect-square"
+      aspectClass: "aspect-square",
+      image: "/imagenes/Camisas.png"
     },
     {
       title: "Pantalones",
       icon: <Layers className="w-8 h-8" />,
-      aspectClass: "aspect-[4/5]"
+      aspectClass: "aspect-[4/5]",
+      image: "/imagenes/Pantalones.png"
+
     },
     {
-      title: "Batas",
+      title: "Dotación",
       icon: <ShieldAlert className="w-8 h-8" />,
-      aspectClass: "aspect-square"
+      aspectClass: "aspect-square",
+      image: "/imagenes/Dotacion.png"
     }
   ];
 
@@ -72,11 +82,21 @@ export const ProductGallery: React.FC = () => {
               className={`break-inside-avoid w-full bg-surface-container-lowest p-6 rounded-xl premium-border text-center reveal active cursor-pointer group flex flex-col justify-center items-center shadow-ambient transition-all duration-300`}
               style={{ transitionDelay: `${index * 50}ms` }}
             >
-              <div className={`w-full ${item.aspectClass} bg-surface-container rounded-lg mb-4 flex items-center justify-center text-outline-variant group-hover:bg-surface-container-high transition-colors`}>
-                <div className="group-hover:scale-110 group-hover:text-secondary transition-all duration-300">
-                  {item.icon}
-                </div>
-              </div>
+              <div
+  className={`w-full ${item.aspectClass} bg-surface-container rounded-lg mb-4 overflow-hidden flex items-center justify-center`}
+>
+  {item.image ? (
+    <img
+      src={item.image}
+      alt={item.title}
+      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+    />
+  ) : (
+    <div className="group-hover:scale-110 group-hover:text-secondary transition-all duration-300 text-outline-variant">
+      {item.icon}
+    </div>
+  )}
+</div>
               <h4 className="font-display text-base text-primary font-bold transition-colors group-hover:text-secondary">
                 {item.title}
               </h4>
@@ -86,8 +106,9 @@ export const ProductGallery: React.FC = () => {
 
         {/* Bottom CTA */}
         <div className="text-center mt-16 reveal active">
-          <a 
-            href="#" 
+          <a
+            href="/catalogo/CatalogoCOTEXCAL.pdf"
+            download
             className="inline-flex items-center text-primary font-body text-sm font-bold border-b-2 border-primary pb-1 hover:text-secondary hover:border-secondary transition-colors gap-1.5"
           >
             Descargar Catálogo Completo (PDF) 

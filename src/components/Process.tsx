@@ -76,7 +76,7 @@ export const Process: React.FC = () => {
           {/* Image side */}
           <div className="hidden lg:block relative reveal active rounded-xl overflow-hidden shadow-ambient h-170 self-center">
             <img 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqtOxlsHhKNNPFVlRwshLl-ztwdtViBbYXIabZ799fkDgbqiaiLmZaOHdNYWot59AY-2kbm13Qi7nK-23cYcHGfKHhSGYAYMacTjaajwu8_8l7gFZC18K5eKWRie0zNFvy3cdWJTBS89SrZ1POqS-POZxi3sgnczubgXlMNJubpnh-iUsVCmYM1jOxF0n7GheVnVU591vqrO9jUhAaiA548oh9ADMZzXIJqKHq-qQTPdAHZHxgVWp-_cMYesL9NuTirur51EkxrpM" 
+              src="/imagenes/LogoCotexcal.png" 
               alt="High-quality embroidery process"
               className="w-full h-full object-cover"
             />

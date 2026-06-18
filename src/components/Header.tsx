@@ -22,7 +22,7 @@ export const Header: React.FC = () => {
         {/* Logo */}
         <div className="flex items-center">
           <Link to="/" className="font-display text-2xl font-bold tracking-tighter text-primary hover:opacity-95 transition-opacity">
-            Cotexcal Manufacturing
+            Cotexcal 
           </Link>
         </div>
 
