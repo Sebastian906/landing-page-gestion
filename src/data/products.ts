@@ -14,6 +14,7 @@ export const PRODUCTS: Product[] = [
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         minOrder: 50,
         iconName: 'Shirt',
+        image: '/catalogo/CamisaEjecutiva.png',
     },
     {
         id: 'PRD-002',
@@ -28,6 +29,7 @@ export const PRODUCTS: Product[] = [
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
         minOrder: 50,
         iconName: 'Shirt',
+        image: '/catalogo/CamisaPolo.png',
     },
     {
         id: 'PRD-003',
@@ -42,6 +44,7 @@ export const PRODUCTS: Product[] = [
         sizes: ['28', '30', '32', '34', '36', '38', '40'],
         minOrder: 30,
         iconName: 'Layers',
+        image: '/catalogo/PantalonEjecutivo.png',
     },
     {
         id: 'PRD-004',
@@ -56,6 +59,7 @@ export const PRODUCTS: Product[] = [
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         minOrder: 50,
         iconName: 'HeartPulse',
+        image: '/catalogo/ScrubMedico.png',
     },
     {
         id: 'PRD-005',
@@ -70,6 +74,7 @@ export const PRODUCTS: Product[] = [
         sizes: ['S', 'M', 'L', 'XL', 'XXL'],
         minOrder: 30,
         iconName: 'ShieldAlert',
+        image: '/catalogo/BataLaboratorio.png',
     },
     {
         id: 'PRD-006',
@@ -84,6 +89,7 @@ export const PRODUCTS: Product[] = [
         sizes: ['T2', 'T4', 'T6', 'T8', 'T10', 'T12', 'T14', 'S', 'M', 'L', 'XL'],
         minOrder: 100,
         iconName: 'GraduationCap',
+        image: '/catalogo/UniformeEscolar.png',
     },
     {
         id: 'PRD-007',
@@ -98,6 +104,7 @@ export const PRODUCTS: Product[] = [
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
         minOrder: 30,
         iconName: 'Sparkles',
+        image: '/catalogo/ChaquetaSoftshell.png',
     },
     {
         id: 'PRD-008',
@@ -112,6 +119,7 @@ export const PRODUCTS: Product[] = [
         sizes: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
         minOrder: 30,
         iconName: 'Hammer',
+        image: '/catalogo/OverolIndustrial.png',
     },
     {
         id: 'PRD-009',
@@ -126,6 +134,7 @@ export const PRODUCTS: Product[] = [
         sizes: ['S', 'M', 'L', 'XL', 'XXL'],
         minOrder: 50,
         iconName: 'ShieldAlert',
+        image: '/catalogo/ChalecoLogistico.png',
     },
     {
         id: 'PRD-010',
@@ -140,6 +149,7 @@ export const PRODUCTS: Product[] = [
         sizes: ['Único (ajustable)'],
         minOrder: 30,
         iconName: 'Scissors',
+        image: '/catalogo/DelantalCocina.png',
     },
     {
         id: 'PRD-011',
@@ -154,6 +164,7 @@ export const PRODUCTS: Product[] = [
         sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
         minOrder: 50,
         iconName: 'Shirt',
+        image: '/catalogo/CamisaServicio.png',
     },
     {
         id: 'PRD-012',
@@ -168,6 +179,7 @@ export const PRODUCTS: Product[] = [
         sizes: ['28', '30', '32', '34', '36', '38', '40', '42'],
         minOrder: 30,
         iconName: 'Layers',
+        image: '/catalogo/PantalonCargo.png',
     },
 ];
 

@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ChevronRight, ArrowLeft, Minus, Plus, ShoppingBag, CheckCircle2, Package, Ruler, Layers as LayersIcon } from 'lucide-react';
 import { PRODUCTS } from '../data/products';
-import { getProductIcon, formatPrice } from '../utils/productIcons';
+import { formatPrice } from '../utils/productIcons';
 import { useApp } from '../context/AppContext';
 import { ProductCard } from '../components/ProductCard';
 
@@ -35,7 +35,7 @@ export const ProductDetailPage: React.FC = () => {
         );
     }
 
-    const Icon = getProductIcon(product.iconName);
+    // const Icon = getProductIcon(product.iconName);
 
     const relatedProducts = PRODUCTS
         .filter(p => p.id !== product.id && (p.sector === product.sector || p.category === product.category))
@@ -79,8 +79,12 @@ export const ProductDetailPage: React.FC = () => {
 
                         {/* Image side */}
                         <div className="reveal active">
-                            <div className="aspect-square w-full bg-surface-container rounded-xl flex items-center justify-center text-outline-variant relative overflow-hidden premium-border">
-                                <Icon className="w-32 h-32 md:w-40 md:h-40" strokeWidth={1.2} />
+                            <div className="aspect-square w-full bg-surface-container rounded-xl relative overflow-hidden premium-border">
+                                <img
+                                    src={product.image}
+                                    alt={product.name}
+                                    className="w-full h-full object-cover"
+                                />
                                 <span className="absolute top-4 left-4 bg-surface-container-lowest/90 backdrop-blur-sm text-on-surface-variant font-body text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-default">
                                     {product.sector}
                                 </span>

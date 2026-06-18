@@ -26,6 +26,7 @@ export interface Product {
     sizes: string[];
     minOrder: number;
     iconName: string;
+    image: string;
 }
 
 export interface QuoteItem {

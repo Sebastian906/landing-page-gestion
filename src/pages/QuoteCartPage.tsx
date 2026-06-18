@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Trash2, Minus, Plus, ShoppingBag, ArrowLeft, CheckCircle2, FileText } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { getProductIcon, formatPrice } from '../utils/productIcons';
+import { formatPrice } from '../utils/productIcons';
 import { submitOrder } from '../lib/ordersService';
 
 export const QuoteCartPage: React.FC = () => {
@@ -133,15 +133,19 @@ export const QuoteCartPage: React.FC = () => {
                         {/* Items list */}
                         <div className="lg:col-span-2 space-y-4">
                             {quoteItems.map((item) => {
-                                const Icon = getProductIcon(item.product.iconName)
+                                // const Icon = getProductIcon(item.product.iconName)
                                 return (
                                     <div
                                         key={item.product.id}
                                         className="bg-surface-container-lowest rounded-xl premium-border shadow-ambient p-5 flex flex-col sm:flex-row gap-5"
                                     >
-                                        {/* Icon */}
-                                        <div className="w-full sm:w-24 h-24 shrink-0 bg-surface-container rounded-lg flex items-center justify-center text-outline-variant">
-                                            <Icon className="w-10 h-10" strokeWidth={1.5} />
+                                        {/* Product image */}
+                                        <div className="w-full sm:w-24 h-24 shrink-0 bg-surface-container rounded-lg overflow-hidden">
+                                            <img
+                                                src={item.product.image}
+                                                alt={item.product.name}
+                                                className="w-full h-full object-cover"
+                                            />
                                         </div>
 
                                         {/* Details */}
