@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, HardHat } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 export const Sectors: React.FC = () => {
   return (
